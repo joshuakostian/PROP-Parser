@@ -1,0 +1,5 @@
+# Build output (compiled classes)
+out/
+
+# Compiled Java classes
+*.class
