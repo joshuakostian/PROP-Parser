@@ -22,7 +22,7 @@ public class AssignmentNode implements INode {
   @Override
   public Object evaluate(Object[] args) throws Exception {
     double value = (double) expr.evaluate(args);
-    value = Math.round(value * 100.0) / 100.0; // trim float noise (e.g. -0.20000000000000007 -> -0.2)
+    value = Math.round(value * 100.0) / 100.0; // trim float
     symbolTable.put((String) id.value(), value);
     return ((String) id.value()) + " = " + value + "\n";
   }
