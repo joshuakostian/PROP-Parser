@@ -22,11 +22,11 @@ public class TermNode implements INode {
   }
 
   // Folds '*'/'/' left-associatively across the right-recursive chain.
-  private double evaluateFromLeft(Object[] args, double acc) throws Exception {
+  private double evaluateFromLeft(Object[] args, double valueSoFar) throws Exception {
     if (op == null)
-      return acc;
+      return valueSoFar;
     double next = (double) term.factor().evaluate(args);
-    double result = (op.token() == Token.MULT_OP) ? acc * next : acc / next;
+    double result = (op.token() == Token.MULT_OP) ? valueSoFar * next : valueSoFar / next;
     return term.evaluateFromLeft(args, result);
   }
 

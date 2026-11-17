@@ -22,11 +22,11 @@ public class ExpressionNode implements INode {
   }
 
   // Folds '+'/'-' left-associatively across the right-recursive chain.
-  private double evaluateFromLeft(Object[] args, double acc) throws Exception {
+  private double evaluateFromLeft(Object[] args, double valueSoFar) throws Exception {
     if (op == null)
-      return acc;
+      return valueSoFar;
     double next = (double) expr.term().evaluate(args);
-    double result = (op.token() == Token.ADD_OP) ? acc + next : acc - next;
+    double result = (op.token() == Token.ADD_OP) ? valueSoFar + next : valueSoFar - next;
     return expr.evaluateFromLeft(args, result);
   }
 

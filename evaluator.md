@@ -60,45 +60,45 @@ So `evaluateFromLeft` exists to walk a tree that leans right while doing math th
 
 ---
 
-## 3. The fix: thread an accumulator
+## 3. The fix: thread a running value
 
 The load-bearing part of `ExpressionNode` (and `TermNode`, identically but for `*`/`/`):
 
 ```java
-private double evaluateFromLeft(Object[] args, double acc) {
+private double evaluateFromLeft(Object[] args, double valueSoFar) {
     if (op == null)
-        return acc;                                     // no more operators → done
+        return valueSoFar;                                     // no more operators → done
 
     double next = (double) expr.term().evaluate(args);  // the REST's *first* term only
-    double result = (op.token() == Token.ADD_OP) ? acc + next : acc - next;
-    return expr.evaluateFromLeft(args, result);         // recurse with the new acc
+    double result = (op.token() == Token.ADD_OP) ? valueSoFar + next : valueSoFar - next;
+    return expr.evaluateFromLeft(args, result);         // recurse with the new valueSoFar
 }
 ```
 
-**What `acc` means:** *the value of everything seen so far, moving left to right.*
+**What `valueSoFar` means:** *the value of everything seen so far, moving left to right.*
 
 The crucial line is `expr.term()` — it grabs **only the first term of the rest**, not the whole rest. That's the entire trick.
 
 | Strategy | Combine with | Result |
 |---|---|---|
-| ❌ right-associative | `acc op expr.evaluate()` (the whole rest) | `10 - (3 - 2)` = 9 |
-| ✅ left-associative | `acc op expr.term()` (one term), then continue | `(10 - 3) - 2` = 5 |
+| ❌ right-associative | `valueSoFar op expr.evaluate()` (the whole rest) | `10 - (3 - 2)` = 9 |
+| ✅ left-associative | `valueSoFar op expr.term()` (one term), then continue | `(10 - 3) - 2` = 5 |
 
 Tracing `10 - 3 - 2` (tree `E1(10, -, E2(3, -, E3(2)))`):
 
-| Step | `acc` | this node's op | `next` (first term of the rest) | new `acc` |
+| Step | `valueSoFar` | this node's op | `next` (first term of the rest) | new `valueSoFar` |
 |---|---|---|---|---|
 | start | `10.0` | `-` | `3.0` | `10.0 - 3.0 = 7.0` |
 | recurse | `7.0` | `-` | `2.0` | `7.0 - 2.0 = 5.0` |
 | recurse | `5.0` | *(none)* | — | return `5.0` |
 
-This is exactly the same as flattening the operator chain into a list and folding from the left — the accumulator just does that fold while walking the recursive tree.
+This is exactly the same as flattening the operator chain into a list and folding from the left — the running value just does that fold while walking the recursive tree.
 
 ---
 
 ## 4. Precedence falls out of the layering
 
-The accumulator walks left-to-right, but precedence is still correct because the two levels are separate:
+The running value walks left-to-right, but precedence is still correct because the two levels are separate:
 
 - `ExpressionNode` folds `+` / `-` one **term** at a time.
 - `TermNode` folds `*` / `/` one **factor** at a time.
@@ -112,7 +112,7 @@ ExpressionNode( 10, -, ExpressionNode( Term( 2 * 3 ) ) )
 `Term(2 * 3)` is a single term — its own `TermNode.evaluate` computes `2 * 3 = 6.0` *before* the `-` sees it:
 
 ```
-E.evaluate → evaluateFromLeft(acc = 10.0)
+E.evaluate → evaluateFromLeft(valueSoFar = 10.0)
    next = E.term().evaluate() = Term(2*3).evaluate() = 6.0   ← '*' already done
    result = 10.0 - 6.0 = 4.0
 ```
