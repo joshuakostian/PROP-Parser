@@ -8,19 +8,19 @@ public class FactorNode implements INode {
   private Lexeme leftParen;
   private Lexeme rightParen;
   private ExpressionNode expr;
-  private Map<String, Double> environment;
+  private Map<String, Double> symbolTable;
 
-  public FactorNode(Lexeme operand, Map<String, Double> environment) {
+  public FactorNode(Lexeme operand, Map<String, Double> symbolTable) {
     this.operand = operand;
-    this.environment = environment;
+    this.symbolTable = symbolTable;
   }
 
   public FactorNode(Lexeme leftParen, ExpressionNode expr, Lexeme rightParen,
-      Map<String, Double> environment) {
+      Map<String, Double> symbolTable) {
     this.leftParen = leftParen;
     this.expr = expr;
     this.rightParen = rightParen;
-    this.environment = environment;
+    this.symbolTable = symbolTable;
   }
 
   @Override
@@ -28,7 +28,7 @@ public class FactorNode implements INode {
     if (operand != null) {
       if (operand.token() == Token.INT_LIT)
         return operand.value();
-      return environment.getOrDefault((String) operand.value(), 0.0); // unassigned id = 0
+      return symbolTable.getOrDefault((String) operand.value(), 0.0); // unassigned id = 0
     }
     return expr.evaluate(args);
   }

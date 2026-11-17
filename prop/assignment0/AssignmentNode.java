@@ -8,22 +8,22 @@ public class AssignmentNode implements INode {
   private Lexeme assignOp;
   private ExpressionNode expr;
   private Lexeme semicolon;
-  private Map<String, Double> environment;
+  private Map<String, Double> symbolTable;
 
   public AssignmentNode(Lexeme id, Lexeme assignOp, ExpressionNode expr,
-      Lexeme semicolon, Map<String, Double> environment) {
+      Lexeme semicolon, Map<String, Double> symbolTable) {
     this.id = id;
     this.assignOp = assignOp;
     this.expr = expr;
     this.semicolon = semicolon;
-    this.environment = environment;
+    this.symbolTable = symbolTable;
   }
 
   @Override
   public Object evaluate(Object[] args) throws Exception {
     double value = (double) expr.evaluate(args);
     value = Math.round(value * 100.0) / 100.0; // trim float noise (e.g. -0.20000000000000007 -> -0.2)
-    environment.put((String) id.value(), value);
+    symbolTable.put((String) id.value(), value);
     return ((String) id.value()) + " = " + value + "\n";
   }
 
