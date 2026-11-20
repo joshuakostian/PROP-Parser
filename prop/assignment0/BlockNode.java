@@ -22,7 +22,6 @@ public class BlockNode implements INode {
     Util.addTabs(builder, tabs);
     builder.append("BlockNode\n");
 
-    // Braces print at the SAME indent as "BlockNode" (see parsetree2.txt).
     Util.addTabs(builder, tabs);
     builder.append(leftCurly.toString()).append('\n');
 

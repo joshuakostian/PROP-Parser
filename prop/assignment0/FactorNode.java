@@ -4,7 +4,7 @@ import java.util.Map;
 
 // factor = int | id | '(' expr ')'
 public class FactorNode implements INode {
-  private Lexeme operand; // INT_LIT or IDENT (null for '(' expr ')')
+  private Lexeme operand; // INT_LIT or IDENT or null for '(' expr ')'
   private Lexeme leftParen;
   private Lexeme rightParen;
   private ExpressionNode expr;

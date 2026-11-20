@@ -111,7 +111,7 @@ public class Tokenizer implements ITokenizer {
       sb.append(scanner.current());
       scanner.moveNext();
     }
-    return new Lexeme(Double.parseDouble(sb.toString()), Token.INT_LIT); // stored as Double
+    return new Lexeme(Double.parseDouble(sb.toString()), Token.INT_LIT);
   }
 
   private boolean isIdentifierChar(char c) {

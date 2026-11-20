@@ -21,7 +21,6 @@ public class TermNode implements INode {
     return evaluateFromLeft(args, (double) factor.evaluate(args));
   }
 
-  // Folds '*'/'/' left-associatively across the right-recursive chain.
   private double evaluateFromLeft(Object[] args, double valueSoFar) throws Exception {
     if (op == null)
       return valueSoFar;

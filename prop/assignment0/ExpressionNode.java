@@ -3,7 +3,7 @@ package prop.assignment0;
 // expr = term [ ('+' | '-') expr ]
 public class ExpressionNode implements INode {
   private TermNode term;
-  private Lexeme op; // ADD_OP or SUB_OP, or null
+  private Lexeme op; // ADD_OP or SUB_OP or null
   private ExpressionNode expr;
 
   public ExpressionNode(TermNode term, Lexeme op, ExpressionNode expr) {
@@ -21,7 +21,6 @@ public class ExpressionNode implements INode {
     return evaluateFromLeft(args, (double) term.evaluate(args));
   }
 
-  // Folds '+'/'-' left-associatively across the right-recursive chain.
   private double evaluateFromLeft(Object[] args, double valueSoFar) throws Exception {
     if (op == null)
       return valueSoFar;
